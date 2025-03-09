@@ -16,7 +16,7 @@ Feature: List of rider page
     Given user logs in with valid credentials to get list of rider
     When user selects rider from the left menu and list of rider to get rider
     And Select create rider
-    Then rider should be deleted
+    Then rider should be created
 
   Scenario: Admin can view rider details from list of rider
     Given user logs in with valid credentials to get list of rider

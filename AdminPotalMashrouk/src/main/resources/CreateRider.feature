@@ -1,5 +1,4 @@
 Feature: Create rider page
-git
   Scenario: User can sign in with valid credentials and create a rider
     Given user logs in with valid credentials to create rider
     When user selects rider from the left menu to create rider

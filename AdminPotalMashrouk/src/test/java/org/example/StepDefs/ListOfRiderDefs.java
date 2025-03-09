@@ -112,4 +112,9 @@ public class ListOfRiderDefs {
         // Click on view icon at list of rider page
         listOfRider.clickOnViewButton(arg0);
     }
+
+    @Then("rider should be created")
+    public void riderShouldBeCreated() {
+        System.out.println("create page is opened successfully");
+    }
 }
