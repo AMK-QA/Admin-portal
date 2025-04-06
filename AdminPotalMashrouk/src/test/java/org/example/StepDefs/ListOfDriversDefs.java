@@ -8,6 +8,8 @@ import org.example.Pages.*;
 import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Pattern;
 
 public class ListOfDriversDefs {
@@ -53,23 +55,6 @@ public class ListOfDriversDefs {
     }
 
 
-    @And("Select driver delete email number {int} and click on delete button")
-    public void selectDriverDeleteEmailNumberAndClickOnDeleteButton(int arg0) {
-        // Select which icons need to click, and number of email
-        listOfDriver.clickOnDeleteIcon(arg0);
-    }
-
-    @And("Click on {string} to confirm deleting at list of driver")
-    public void clickOnToConfirmDeletingAtListOfDriver(String arg0) {
-        // Select yes to confirm driver
-        listOfDriver.confirmDeleteRider(arg0);
-    }
-
-    @Then("driver should be deleted")
-    public void driverShouldBeDeleted() {
-        System.out.println("delete");
-    }
-
     @And("Select create driver")
     public void selectCreateDriver() {
         // Create rider page
@@ -100,22 +85,52 @@ public class ListOfDriversDefs {
         listOfDriver.openSearchBox();
         // Filter rider list
         listOfDriver.searchInListOfDrivers(arg0);
+        for (int i=0; i<listOfDriver.driverName().size(); i++){
+            // Assert all result include filtered name only
+            softAssert.assertTrue(listOfDriver.driverName().get(i).getText().contains(arg0));
+        }
     }
 
     @Then("The filtered drivers list should be displayed")
     public void theFilteredDriversListShouldBeDisplayed() {
-        System.out.println("filtered");
+        // Ensure all assertions are done
+        softAssert.assertAll();
     }
 
-    @And("user filtered with start date {string} to end date {string} at list of driver page")
-    public void userFilteredWithStartDateToEndDateAtListOfDriverPage(String arg0, String arg1) {
+    @And("user filtered with start date {string} to end date {string} to driver number {int} at list of driver page")
+    public void userFilteredWithStartDateToEndDateAtListOfDriverPage(String arg0, String arg1, int arg2) {
         // Select start date and end date
         listOfDriver.clickOnFiltersButton(arg0,arg1);
+        // Define the date format of filter date
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // Define the date format of created and updated
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        // Get created date from UI
+        String createdDateText = listOfDriver.returnCreatedDate(arg2);
+        // Substring from 1 to 10 to neglect time
+        String createdDateOnly = createdDateText.substring(0, 10);
+        LocalDate createdDate = LocalDate.parse(createdDateOnly, formatter2);
+        // Get update date from UI
+        String updatedDateText = listOfDriver.returnUpdatedDate(arg2);
+        // Substring from 1 to 10 to neglect time
+        String updatedDateOnly = updatedDateText.substring(0, 10);
+        LocalDate updatedDate = LocalDate.parse(updatedDateOnly, formatter2);
+        // Define filtered start and end dates (You can fetch these dynamically if needed)
+        LocalDate startDate = LocalDate.parse(arg0, formatter);
+        LocalDate endDate = LocalDate.parse(arg1, formatter);
+        // Check if createdDate is between startDate and endDate
+        Assert.assertTrue(
+                (createdDate.isEqual(startDate) || createdDate.isAfter(startDate)) &&
+                        (createdDate.isEqual(endDate) || createdDate.isBefore(endDate)),
+                "Created date is not within the filtered range"
+        );
+        // Check if UpdatedDate is between startDate and endDate
+        Assert.assertTrue(
+                (updatedDate.isEqual(startDate) || updatedDate.isAfter(startDate)) &&
+                        (updatedDate.isEqual(endDate) || updatedDate.isBefore(endDate)),
+                "Updated date is not within the filtered range!"
+        );
     }
 
-    @And("user confirm filter by click on {string} button at list of driver page")
-    public void userConfirmFilterByClickOnButtonAtListOfDriverPage(String arg0) {
-        // Confirm date filter
-        listOfDriver.clickOnFilterButtons(arg0);
-    }
+
 }

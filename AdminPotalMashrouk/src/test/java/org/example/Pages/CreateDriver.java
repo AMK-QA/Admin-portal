@@ -1,13 +1,12 @@
 package org.example.Pages;
-
 import org.example.StepDefs.Hooks;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
@@ -29,23 +28,25 @@ public class CreateDriver {
     // To select options from drop down menu that include gender, driver state, nationality
     @FindBy(className = "ant-select-item-option-content")
     public List<WebElement> dropDownMenu;
-    // Expiration date of licence
-    @FindBy(name = "licenseExpirationDate")
-    public WebElement expirationDate;
     // Set birthday field
-    @FindBy(name = "birthday")
-    public WebElement birthdayField;
+    @FindBy(className = "ant-picker-input")
+    public List<WebElement> date;
     // Create button locator
-    @FindBy(className = "driver_submitBtn__hqE0R")
+    @FindBy(className = "style_submitBtn__LVfF5")
     public WebElement createButton;
-    // Upload photo locator
-    @FindBy(css = "input[accept=\"image/jpeg,.jpeg,.jpg,image/png,.png\"]")
-            public WebElement uploadPhoto;
+    // Pop up at left side
+    @FindBy(className = "sidebar_floating_input__sRFBY")
+            public WebElement leftPop;
+    // Success message
+    @FindBy(className = "Toastify__toast--close-on-click")
+            public WebElement successMessage;
+
 
 
     /**************************************** Methods ***************************************************/
 
     WebDriverWait wait = new WebDriverWait(Hooks.driver, Duration.ofSeconds(10));
+    Actions actions = new Actions(Hooks.driver);
 
     public String getTextInCreateDriver(){
         return wait.until(ExpectedConditions.visibilityOf(textInCreateDriver)).getText();
@@ -86,12 +87,8 @@ public class CreateDriver {
         formCreation.get(5).clear();
         // Send value of driver licence
         formCreation.get(5).sendKeys(driverLicence);
-        // Clear expiration date
-        expirationDate.clear();
         // Set licence expiration date
-        expirationDate.sendKeys(licenceExpirationDate);
-        // Press enter from keyboard
-        expirationDate.sendKeys(Keys.ENTER);
+        actions.click(date.get(1)).sendKeys(licenceExpirationDate).sendKeys(Keys.ENTER).perform();
 
     }
     public void setPassword(String password){
@@ -107,15 +104,16 @@ public class CreateDriver {
         formCreation.get(7).sendKeys(confirmPassword);
     }
     public void setGender(String gender){
+        int size = dropDownMenu.size();
         // Click on gender field
-        openThreeDropDownMenu.get(2).click();
+        openThreeDropDownMenu.get(3).click();
         if(Objects.equals(gender, "female")){
-            // Select female from list included gender, get index 3 at dynamic drop down menu because status is opened first
-            dropDownMenu.get(3).click();
+            // Select female from list included gender
+            dropDownMenu.getLast().click();
         }
         else if (Objects.equals(gender, "male")) {
-            // Select male from list included gender, get index 2
-            dropDownMenu.get(2).click();
+            // Select male from list included gender
+            dropDownMenu.get(size).click();
         }
     }
     public void setDriverStatus(String riderStatus) {
@@ -130,26 +128,56 @@ public class CreateDriver {
         }
     }
     public void setNationality() {
+        // Get size of menu before clicking on nationality menu
+        int size = dropDownMenu.size();
+        wait.until(ExpectedConditions.invisibilityOf(leftPop));
         // Click on nationality
         openThreeDropDownMenu.get(1).click();
         /* Select nationality from drop down menu,
             get index from 4 to end of element at dynamic drop down menu
             because status and gender are opened first */
-        dropDownMenu.get(6).click();
+        dropDownMenu.get(size+4).click();
     }
     public void setBirthdayField(String birthday){
-        // Clear field to enter right value
-        birthdayField.clear();
-        // Set birthday field
-        birthdayField.sendKeys(birthday);
-        // Action to press enter button
-        birthdayField.sendKeys(Keys.ENTER);
+      // Set birthday field
+        actions.click(date.getFirst()).sendKeys(birthday).sendKeys(Keys.ENTER).perform();
     }
-    public void uploadPhoto(){
-        uploadPhoto.sendKeys("C:\\Users\\Alaa\\Contacts\\Projects\\AdminPotalMashrouk\\src\\test\\java\\org\\example\\TestData\\lOGO.png");
+    public void setReligion(String religion){
+        // Get size of drop down options before clicking
+        int size = dropDownMenu.size();
+        // Click on menu
+        openThreeDropDownMenu.get(2).click();
+        if (Objects.equals(religion,"islam")){
+            // Click on islam option
+            dropDownMenu.get(size).click();
+        } else if (Objects.equals(religion,"christianity")) {
+            // Click on Christianity
+            dropDownMenu.get(size+1).click();
+        } else if (Objects.equals(religion.toLowerCase(),"judaism")) {
+            // Click on Judaism
+            dropDownMenu.get(size+2).click();
+        } else if (Objects.equals(religion,"hinduism")) {
+            // Click on Hinduism
+            dropDownMenu.get(size+3).click();
+        } else if (Objects.equals(religion,"buddhism")) {
+            // Click on Buddhism
+            dropDownMenu.get(size+4).click();
+        } else if (Objects.equals(religion,"sikhism")) {
+            // Click on Sikhism
+            dropDownMenu.get(size+5).click();
+        } else {
+            // Click on other
+            dropDownMenu.getLast().click();
+        }
+
     }
     public void clickOnCreateButton(){
         // Click on create button
         createButton.click();
     }
+    public String getSuccessMessage(){
+        // Return success message
+        return wait.until(ExpectedConditions.visibilityOf(successMessage)).getText();
+    }
+
 }

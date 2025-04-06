@@ -1,5 +1,6 @@
 package org.example.StepDefs;
 
+import com.github.javafaker.Faker;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -15,6 +16,7 @@ public class CreateDriversDefs {
     HomePage homePage;
     CreateDriver createDriver;
     SoftAssert softAssert = new SoftAssert();
+    Faker faker = new Faker();
 
     @Given("user logs in with valid credentials to create driver")
     public void userLogsInWithValidCredentialsToCreateDriver() {
@@ -61,13 +63,13 @@ public class CreateDriversDefs {
     @And("user set his phone number at driver form")
     public void userSetHisPhoneNumberAtDriverForm() {
         // Set phone number, get phone number from configuration file
-        createDriver.setPhoneNumber(Hooks.properties.getProperty("phoneNumber"));
+        createDriver.setPhoneNumber(Hooks.properties.getProperty("phoneNumber")+faker.number().numberBetween(1,9)+faker.number().numberBetween(1,9));
     }
 
     @And("user enter his email at driver form")
     public void userEnterHisEmailAtDriverForm() {
         // Get email from configuration file
-        createDriver.setEmail(Hooks.properties.getProperty("UserName"));
+        createDriver.setEmail(faker.internet().safeEmailAddress());
     }
 
 
@@ -87,7 +89,7 @@ public class CreateDriversDefs {
 
     @And("user set nationality and his birthday {string} at driver form")
     public void userSetNationalityAndHisBirthdayAtDriverForm(String arg0) {
-        // Select wheelchair accessibility
+        // Select nationality accessibility
         createDriver.setNationality();
         // Set birthday
         createDriver.setBirthdayField(arg0);
@@ -99,17 +101,18 @@ public class CreateDriversDefs {
         // Click on create button
         createDriver.clickOnCreateButton();
     }
+    @And("user select religion {string}")
+    public void userSelectReligion(String arg0) {
+        // Select Religion
+        createDriver.setReligion(arg0);
+    }
 
     @Then("driver created successfully")
     public void driverCreatedSuccessfully() {
-        System.out.println("success");
+        softAssert.assertTrue(createDriver.getSuccessMessage().toLowerCase().contains("created successfully"));
         // To ensure all assertions is done
         softAssert.assertAll();
     }
 
 
-    @And("user enter his photo")
-    public void userEnterHisPhoto() {
-        createDriver.uploadPhoto();
-    }
 }

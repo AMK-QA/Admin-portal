@@ -22,17 +22,11 @@ public class ListOfDriver {
     @FindBy(className = "clumber_title__JvOZd")
     public WebElement textInListOfDriver;
     // Get driver email
-    @FindBy(css = "tr[class=\"ant-table-row ant-table-row-level-0\"] td:nth-child(3) div")
+    @FindBy(css = "tr[class=\"ant-table-row ant-table-row-level-0\"] td:nth-child(4) div")
     public List<WebElement> driverEmail;
     // List include edit, delete & view
     @FindBy(className = "ant-space-item")
     public List<WebElement> rightIcons;
-    // Pop appear to confirm delete
-    @FindBy(className = "ant-popconfirm-title")
-    public WebElement popUp;
-    // Yes or No at alert to confirm deleting
-    @FindBy(css = "div[class=\"ant-popconfirm-buttons\"] button")
-    public List<WebElement> yesOrNo;
     // List of search, filter & create button
     @FindBy(css = "div[class=\"style_Search_Controls_Container__zJd28\"] button")
     public List<WebElement> buttonsList;
@@ -45,6 +39,16 @@ public class ListOfDriver {
     // Buttons at filter date cancel & apply, cancel with index 0 & apply with index 1
     @FindBy(css = "div[class=\"ant-modal-footer\"] button")
     public List<WebElement> filterButton;
+    // List of driver name
+    @FindBy(css = "div[style=\"display: flex; align-items: center; gap: 8px;\"] div")
+            public List<WebElement> driverName;
+    // List of all elements present in the driver
+    @FindBy(css = "div[style=\"text-align: center;\"]")
+            public List<WebElement> elementsInDriver;
+    // Buttons at filter dates
+    @FindBy(css = "div[class=\"ant-modal-footer\"] button")
+            public List<WebElement> applyOrCancel;
+
 
     /**************************************** Methods ***************************************************/
 
@@ -53,15 +57,22 @@ public class ListOfDriver {
     public String getTextInListOfDriver(){
         return wait.until(ExpectedConditions.visibilityOf(textInListOfDriver)).getText();
     }
+    public String returnCreatedDate(int number){
+        // Equation to get created date
+        int dateElement = number * 16;
+        return elementsInDriver.get(dateElement).getText();
+    }
+    public String returnUpdatedDate(int number){
+        // Equation to get updated date
+        int dateElement = number * 16;
+        return elementsInDriver.get(dateElement-1).getText();
+    }
     public EditDriverPage clickOnEditIcon(int email) {
         // Condition to enable the Edit button based on the number of updated email
         rightIcons.get((email * 4) - 4).click();
         return new EditDriverPage();
     }
-    public void clickOnDeleteIcon(int email){
-        // Equation to select Delete button
-        rightIcons.get((email*4)-3).click();
-    }
+
     public void clickOnViewIcon(int email){
         // Equation to select eye button
         rightIcons.get((email*4)-2).click();
@@ -70,24 +81,14 @@ public class ListOfDriver {
     //   Condition to select the View button,
         rightIcons.get((email*4)-1).click();
     }
-
     public List<WebElement> driverEmail(){
         // Return list of email in list of driver
         return driverEmail;
     }
-
-    public void confirmDeleteRider(String confirm){
-        // Wait until alert appear to confirm deleting
-        wait.until(ExpectedConditions.visibilityOf(popUp));
-        if (Objects.equals(confirm,"yes")){
-            // To confirm process press yes, second element in list
-            yesOrNo.get(1).click();
-        }else {
-            // To ignore process press no, the first element in list
-            yesOrNo.getFirst().click();
-        }
+    public List<WebElement> driverName(){
+        // Return list of driver name
+        return driverName;
     }
-
     public void openSearchBox() {
         // Open search box, first element in list button
         buttonsList.getFirst().click();
@@ -107,18 +108,11 @@ public class ListOfDriver {
         date.get(2).sendKeys(endDate);
         // Press enter from keyboard
         date.get(2).sendKeys(Keys.ENTER);
+        // Click on apply button
+        applyOrCancel.get(1).click();
     }
 
-    public void clickOnFilterButtons(String status){
-        if (Objects.equals(status,"apply")){
-            // Click on apply filter
-            filterButton.get(1).click();
-        }
-        else {
-            // cancel filter button
-            filterButton.getFirst().click();
-        }
-    }
+
     public CreateDriver clickOnCreateNewButton(){
         // Click on create new driver
         buttonsList.get(2).click();

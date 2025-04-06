@@ -60,10 +60,7 @@ public class ListOfRider {
         rightIcons.get((email * 4) - 4).click();
         return new EditPage();
     }
-    public void clickOnDeleteIcon(int email){
-        // Equation to select Delete button
-        rightIcons.get((email*4)-3).click();
-    }
+
     public void clickOnViewButton(int email){
     /*   Condition to select the View button,
             button 3 is hidden and the remaining three buttons do not contain a random number */
@@ -73,18 +70,6 @@ public class ListOfRider {
     public List<WebElement> riderEmail(){
         // Return list of email in list of rider
         return riderEmail;
-    }
-
-    public void confirmDeleteRider(String confirm){
-        // Wait until alert appear to confirm deleting
-        wait.until(ExpectedConditions.visibilityOf(popUp));
-        if (Objects.equals(confirm,"yes")){
-            // To confirm process press yes, second element in list
-            yesOrNo.get(1).click();
-        }else {
-            // To ignore process press no, the first element in list
-            yesOrNo.getFirst().click();
-        }
     }
 
     public void openSearchBox() {

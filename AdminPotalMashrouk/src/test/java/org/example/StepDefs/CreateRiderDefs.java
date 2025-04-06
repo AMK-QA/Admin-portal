@@ -1,5 +1,6 @@
 package org.example.StepDefs;
 
+import com.github.javafaker.Faker;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -15,6 +16,7 @@ public class CreateRiderDefs {
     HomePage homePage;
     CreateRider createRider;
     SoftAssert softAssert = new SoftAssert();
+    Faker faker = new Faker();
 
     @Given("user logs in with valid credentials to create rider")
     public void userLogsInWithValidCredentialsToCreateRider() {
@@ -36,7 +38,7 @@ public class CreateRiderDefs {
         // Create new create rider page
         createRider = homePage.selectCreateRider();
         // Assert create rider is opened successfully
-        softAssert.assertTrue(createRider.getTextInCreateRider().contains("rider create"));
+        softAssert.assertTrue(createRider.getTextInCreateRider().toLowerCase().contains("rider create"), "Create page is not displayed");
     }
     @And("user enter his first name {string} and last name {string}")
     public void userEnterHisFirstNameAndLastName(String arg0, String arg1) {
@@ -48,8 +50,8 @@ public class CreateRiderDefs {
 
     @And("user enter his email")
     public void userEnterHisEmail() {
-        // set email
-        createRider.setEmail(Hooks.properties.getProperty("UserName"));
+        // set email with faker date
+        createRider.setEmail(faker.internet().safeEmailAddress());
     }
 
     @And("user set his password and confirmation password")
@@ -62,8 +64,8 @@ public class CreateRiderDefs {
 
     @And("user set his phone number")
     public void userSetHisPhoneNumber() {
-        // Set phone number, get phone number from configuration file
-        createRider.setPhoneNumber(Hooks.properties.getProperty("phoneNumber"));
+        // Set phone number, get phone number from configuration file and random number with faker date
+        createRider.setPhoneNumber(Hooks.properties.getProperty("phoneNumber")+faker.number().numberBetween(1,9)+faker.number().numberBetween(1,9));
     }
 
     @And("user set gender {string} type and set his status {string}")
@@ -86,13 +88,21 @@ public class CreateRiderDefs {
         // Click on create button
         createRider.clickOnCreateButton();
     }
-
+    @And("user add nationality {string} and religion {string}")
+    public void userAddNationalityAndReligion(String arg0, String arg1) {
+        // Set nationality
+        createRider.setNationality(arg0);
+        // Set religion
+        createRider.setReligion(arg1);
+    }
     @Then("rider created successfully")
     public void riderCreatedSuccessfully() {
-        System.out.println("success");
+        // Ensure rider is created successfully
+        softAssert.assertTrue(createRider.getSuccessMessage().toLowerCase().contains("created successfully"),"rider not created");
         // To ensure all assertions is done
         softAssert.assertAll();
     }
+
 
 
 }

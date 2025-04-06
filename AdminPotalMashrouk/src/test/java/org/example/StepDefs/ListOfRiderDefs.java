@@ -56,22 +56,6 @@ public class ListOfRiderDefs {
          softAssert.assertAll();
     }
 
-    @And("Select rider delete email number {int} and click on delete button")
-    public void selectRiderDeleteEmailNumberAndClickOnDeleteButton(int arg0) {
-        // Select which icons need to click, and number of email
-        listOfRider.clickOnDeleteIcon(arg0);
-    }
-    @And("Click on {string} to confirm deleting")
-    public void clickOnToConfirmDeleting(String arg0) {
-        // Select yes to confirm rider
-        listOfRider.confirmDeleteRider(arg0);
-    }
-
-    @Then("rider should be deleted")
-    public void riderShouldBeDeleted() {
-        System.out.println("Rider deleted");
-    }
-
     @And("user select search box and enter value {string} in search box")
     public void userSelectSearchBoxAndEnterValueInSearchBox(String arg0) {
         // Open search box to enter value
@@ -116,5 +100,10 @@ public class ListOfRiderDefs {
     @Then("rider should be created")
     public void riderShouldBeCreated() {
         System.out.println("create page is opened successfully");
+    }
+
+    @Then("rider should be show details")
+    public void riderShouldBeShowDetails() {
+        System.out.println("details is appear successfully");
     }
 }
